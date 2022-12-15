@@ -8,8 +8,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::{
     color::Color,
     print,
-    Pixel::{number, PixelCoord},
-    Point::{Float, Point2D},
+    Pixel::{number, PixelCoord}, dimension::Point::{Point2D, Float},
 };
 
 /**
@@ -37,14 +36,15 @@ pub struct GameWindow {
     pub width: number,
     pub height: number,
     buffer: Box<[u32]>,
-    pre: GameWindowChache,
+    pub pre: GameWindowChache,
 }
-
-struct GameWindowChache {
-    widthF: Float,
-    heightF: Float,
-    widthF2: Float,
-    heightF2: Float,
+#[wasm_bindgen]
+#[derive(Clone, Copy,Debug)]
+pub struct GameWindowChache {
+    pub widthF: Float,
+    pub heightF: Float,
+    pub widthF2: Float,
+    pub heightF2: Float,
 }
 
 #[wasm_bindgen]
@@ -119,7 +119,7 @@ impl GameWindow {
         }
     }
 
-    fn drawPoint(&mut self, x: usize, y: usize, color: Color) {
+    pub fn drawPoint(&mut self, x: usize, y: usize, color: Color) {
         self.buffer[self.width * y + x] = color.as_u32();
     }
     //https://gist.githubusercontent.com/gszauer/5708246/raw/04467d694981db77f0e895e58d35e72c8867d319/Alpha%2520Blending%2520Tutorial
