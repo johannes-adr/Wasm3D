@@ -117,13 +117,13 @@ impl Mesh3D {
         self.applyMatrix(matrix);
     }
 }
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Mesh2D {
-    pub vertecies: Vec<Triangle2D>,
+    pub vertecies: Vec<(Triangle2D,Float)>,
 }
 
 impl Mesh2D {
-    pub fn new(vertecies: Vec<Triangle2D>) -> Self {
+    pub fn new(vertecies: Vec<(Triangle2D,Float)>) -> Self {
         Self { vertecies }
     }
 
@@ -132,7 +132,8 @@ impl Mesh2D {
             return Err("len of vertecies have to be % 3 = 0");
         }
         let vertecies = vertecies.to_vec();
-        Ok(Self::new(unsafe { std::mem::transmute(vertecies) }))
+        todo!();
+        //Ok(Self::new(unsafe { std::mem::transmute(vertecies) }))
     }
 }
 #[derive(Debug, Clone, Copy)]
@@ -169,7 +170,7 @@ impl Triangle3D {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Debug,Clone, Copy)]
 pub struct Triangle2D {
     pub vertecies: [Point2D; 3],
 }

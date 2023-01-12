@@ -24,10 +24,23 @@ impl Default for ViewPoint {
 
 impl ViewPoint {
     pub fn project_vision(&self, mesh: &Mesh3D) -> Mesh2D {
-        let target: Vec<Triangle2D> = mesh
+        let target: Vec<(Triangle2D,Float)> = mesh
             .vertecies
             .iter()
-            .map(|t|self.project_vision_triangle(t))
+            .map(|t|{
+                let mut z = 0.0;
+                let v = t.vertecies;
+                for p in v{
+                    z+=p.z;
+                }
+                let edge1 = [v[0],v[1]];
+
+
+                let z = (v[0].z + v[1].z + v[2].z) / 3.0;
+                (self.project_vision_triangle(t),z)
+
+
+            })
             .collect();
         Mesh2D::new(target)
     }

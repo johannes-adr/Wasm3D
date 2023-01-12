@@ -36,6 +36,7 @@ pub struct GameWindow {
     pub width: number,
     pub height: number,
     buffer: Box<[u32]>,
+    z_buffer: Box<[Float]>,
     pub pre: GameWindowChache,
 }
 #[wasm_bindgen]
@@ -54,6 +55,7 @@ impl GameWindow {
             buffer: vec![0; (width * height) as usize].into_boxed_slice(),
             width,
             height,
+            z_buffer: vec![f32::INFINITY;(width*height) as usize].into_boxed_slice(),
             pre: GameWindowChache {
                 widthF: width as Float,
                 heightF: height as Float,
@@ -79,6 +81,7 @@ impl GameWindow {
 
     pub fn clear(&mut self){
         for elem in self.buffer.iter_mut() { *elem = 0; }
+        for elem in self.z_buffer.iter_mut() { *elem = f32::INFINITY; }
     }
 
     pub fn fillRect(&mut self, p1: PixelCoord, p2: PixelCoord, c: Color) {
@@ -121,6 +124,16 @@ impl GameWindow {
 
     pub fn drawPoint(&mut self, x: usize, y: usize, color: Color) {
         self.buffer[self.width * y + x] = color.as_u32();
+    }
+
+    pub fn drawPoint_z(&mut self, x: usize, y: usize,z: f32, color: Color) {
+        let pos = self.width * y + x;
+        let z_buff = &mut self.z_buffer[pos];
+        if z >= *z_buff{
+            return;
+        }
+        *z_buff = z;
+        self.buffer[pos] = color.as_u32();
     }
     //https://gist.githubusercontent.com/gszauer/5708246/raw/04467d694981db77f0e895e58d35e72c8867d319/Alpha%2520Blending%2520Tutorial
     fn drawPointAlpha(&mut self, x: usize, y: usize, color: Color) {
